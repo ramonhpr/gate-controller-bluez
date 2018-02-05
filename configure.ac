@@ -20,6 +20,10 @@ AC_LANG_C
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
+AC_PROG_LN_S
+
+LT_PREREQ(2.2)
+LT_INIT([disable-static])
 
 AC_ARG_ENABLE(optimization, AC_HELP_STRING([--disable-optimization],
                         [disable code optimization through compiler]), [
