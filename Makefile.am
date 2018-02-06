@@ -66,6 +66,7 @@ AM_CFLAGS = -fvisibility=hidden
 BUILT_SOURCES = ell/internal
 
 ell/internal: Makefile
+	if [[ ! -d $(abs_srcdir)/../ell.git ]] ; then git clone https://kernel.googlesource.com/pub/scm/libs/ell/ell ../ell.git ;fi
 	$(AM_V_at)$(MKDIR_P) ell
 	$(AM_V_GEN)for f in $(ell_sources) ; do \
                 if [ ! -f $$f ] ; then \
