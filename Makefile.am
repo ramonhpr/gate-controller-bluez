@@ -57,7 +57,9 @@ ell_libell_internal_la_SOURCES = $(ell_sources)
 
 bin_PROGRAMS = src/gatectl
 
-src_gatectl_SOURCES = src/main.c
+src_gatectl_SOURCES = src/main.c \
+		      src/dbus.h src/dbus.c \
+		      src/bluez_client.h src/bluez_client.c
 
 src_gatectl_LDADD = ell/libell-internal.la -ldl
 

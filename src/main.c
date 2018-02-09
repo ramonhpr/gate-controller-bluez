@@ -1,5 +1,7 @@
 #include <config.h>
 #include <ell/ell.h>
+#include "dbus.h"
+#include "bluez_client.h"
 
 static struct l_timeout *timeout;
 static bool terminating;
@@ -46,8 +48,13 @@ int main (int argc, char* argv[])
 	l_debug_enable("*");
 	l_info("Gate controller daemon version %s", VERSION);
 
+	dbus_init();
+	client_init();
+
 	l_main_run();
 
+	client_exit();
+	dbus_exit();
 	l_signal_remove(sig);
 	l_main_exit();
 	return 0;
