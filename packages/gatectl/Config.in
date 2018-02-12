@@ -1,0 +1,7 @@
+config BR2_PACKAGE_GATECTL
+	bool "gatectl"
+	 select BR2_PACKAGE_LIBELL
+	help
+	  gatectl is a simple daemon to control a gate
+	  by using a bluez client and send commands over
+	  a radio 433MHz
