@@ -3,8 +3,10 @@
 #include "option.h"
 #include "dbus.h"
 #include "bluez_client.h"
+#include "manager.h"
 
 static struct l_timeout *timeout;
+static struct l_idle *idle;
 static bool terminating;
 
 static void main_loop_quit(struct l_timeout *timeout, void *user_data)
@@ -18,7 +20,8 @@ static void terminate(void)
                 return;
 
         terminating = true;
-
+	manager_exit();
+	l_idle_remove(idle);
         timeout = l_timeout_create(1, main_loop_quit, NULL, NULL);
 }
 
@@ -31,6 +34,10 @@ static void signal_handler(struct l_signal *signal, uint32_t signo,
                 terminate();
                 break;
         }
+}
+
+static void idle_handler(struct l_idle *idle, void* user_data) {
+	manager_state();
 }
 int main (int argc, char* argv[])
 {
@@ -53,6 +60,7 @@ int main (int argc, char* argv[])
 
 	dbus_init();
 	client_init();
+	idle = l_idle_create(idle_handler, NULL, NULL);
 
 	l_main_run();
 
