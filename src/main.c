@@ -1,8 +1,6 @@
 #include <config.h>
 #include <ell/ell.h>
 #include "option.h"
-#include "dbus.h"
-#include "bluez_client.h"
 #include "manager.h"
 
 static struct l_timeout *timeout;
@@ -58,14 +56,10 @@ int main (int argc, char* argv[])
 	l_debug_enable("*");
 	l_info("Gate controller daemon version %s", VERSION);
 
-	dbus_init();
-	client_init();
 	idle = l_idle_create(idle_handler, NULL, NULL);
 
 	l_main_run();
 
-	client_exit();
-	dbus_exit();
 	l_signal_remove(sig);
 	l_main_exit();
 	return 0;

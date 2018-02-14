@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include "option.h"
 #include "manager.h"
+#include "dbus.h"
+#include "bluez_client.h"
 
 static bool print_once = true;
 
@@ -39,8 +41,15 @@ static void handle_power_saving(struct l_timeout* timeout, void* user_data) {
 	print_once = true;
 }
 void manager_state() {
-	static fsm_t fsm = { IDLE };
+	static fsm_t fsm = { SETUP };
 	switch (fsm.cur_state) {
+		case SETUP:
+			if (enable_debug)
+				PRINT_ONCE("SETUP");
+			dbus_init();
+			client_init();
+			update_state(&fsm, IDLE);
+			break;
 		case IDLE:
 			if (enable_debug)
 				PRINT_ONCE("Idle");
@@ -75,5 +84,7 @@ void manager_state() {
 }
 
 void manager_exit() {
+	client_exit();
+	dbus_exit();
 	l_timeout_remove(timeout_saving_power);
 }
