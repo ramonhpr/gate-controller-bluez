@@ -9,7 +9,7 @@ static void do_debug(const char *str, void *user_data)
 
 static void ready_callback(void *user_data)
 {
-        l_info("ready");
+        l_info("Ready");
 
 	if (!l_dbus_object_manager_enable(p_dbus))
                 l_error("Unable to register the ObjectManager");
@@ -17,7 +17,7 @@ static void ready_callback(void *user_data)
 
 static void disconnect_callback(void *user_data)
 {
-        l_main_quit();
+       l_info("Dbus disconnected");
 }
 
 static void signal_message(struct l_dbus_message *message, void *user_data)
@@ -27,16 +27,16 @@ static void signal_message(struct l_dbus_message *message, void *user_data)
         path = l_dbus_message_get_path(message);
         destination = l_dbus_message_get_destination(message);
 
-        l_info("path=%s destination=%s", path, destination);
+        l_info("Path=%s Destination=%s", path, destination);
 
         interface = l_dbus_message_get_interface(message);
         member = l_dbus_message_get_member(message);
 
-        l_info("interface=%s member=%s", interface, member);
+        l_info("Interface=%s Member=%s", interface, member);
 
         sender = l_dbus_message_get_sender(message);
 
-        l_info("sender=%s", sender);
+        l_info("Sender=%s", sender);
 
         if (!strcmp(member, "NameOwnerChanged")) {
                 const char *name, *old_owner, *new_owner;
@@ -45,7 +45,7 @@ static void signal_message(struct l_dbus_message *message, void *user_data)
                                         &name, &old_owner, &new_owner))
                         return;
 
-                l_info("name=%s old=%s new=%s", name, old_owner, new_owner);
+                l_info("Name=%s Old=%s New=%s", name, old_owner, new_owner);
         }
 }
 

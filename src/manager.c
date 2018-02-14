@@ -7,7 +7,7 @@
 
 static bool print_once = true;
 
-#define PRINT_ONCE(x) if(print_once){ l_info(x);print_once=false;}
+#define PRINT_ONCE(x) if(print_once){ l_info("[STATE]:"x);print_once=false;}
 
 struct l_timeout *timeout_saving_power = NULL;
 
@@ -15,6 +15,9 @@ static int8_t update_state(fsm_t* fsm, uint8_t next_state) {
 	if (next_state >= UNKNOW_STATE)
 		return -EINVAL;
 	fsm->cur_state = next_state;
+
+	// Update this for debug messages
+	print_once = true;
 	return 0;
 }
 // TODO: make an option to power saving
@@ -38,14 +41,13 @@ static void handle_power_saving(struct l_timeout* timeout, void* user_data) {
 		l_error("Error in parameter received");
 		exit(1);
 	}
-	print_once = true;
 }
 void manager_state() {
 	static fsm_t fsm = { SETUP };
 	switch (fsm.cur_state) {
 		case SETUP:
 			if (enable_debug)
-				PRINT_ONCE("SETUP");
+				PRINT_ONCE("Setup");
 			dbus_init();
 			client_init();
 			update_state(&fsm, IDLE);
