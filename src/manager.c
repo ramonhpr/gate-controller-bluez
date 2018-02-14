@@ -1,5 +1,6 @@
 #include <ell/ell.h>
 #include <stdbool.h>
+#include "option.h"
 #include "manager.h"
 
 static bool print_once = true;
@@ -19,12 +20,14 @@ static void handle_power_saving(struct l_timeout* timeout, void* user_data) {
 	fsm_t *fsm = user_data;
 	if (fsm) {
 		if (fsm->cur_state == SCANNING) {
-			l_debug("timeout scaning!");
+			if (enable_debug)
+				l_debug("Timeout scaning!");
 			update_state(fsm, IDLE);
 			l_timeout_remove(timeout);
 			timeout_saving_power = l_timeout_create(TIME_SECONDS_IDLE, handle_power_saving, fsm, NULL);
 		} else if (fsm->cur_state == IDLE) {
-			l_debug("Timeout idle!");
+			if (enable_debug)
+				l_debug("Timeout idle!");
 			update_state(fsm, SCANNING);
 			l_timeout_remove(timeout);
 			timeout_saving_power = l_timeout_create(TIME_SECONDS_SCANNING, handle_power_saving, fsm, NULL);
@@ -39,12 +42,14 @@ void manager_state() {
 	static fsm_t fsm = { IDLE };
 	switch (fsm.cur_state) {
 		case IDLE:
-			PRINT_ONCE("Idle");
+			if (enable_debug)
+				PRINT_ONCE("Idle");
 			if (!timeout_saving_power)
 				timeout_saving_power = l_timeout_create(TIME_SECONDS_IDLE, handle_power_saving, &fsm, NULL);
 			break;
 		case SCANNING:
-			PRINT_ONCE("Scanning");
+			if (enable_debug)
+				PRINT_ONCE("Scanning");
 			if (!timeout_saving_power)
 				timeout_saving_power = l_timeout_create(TIME_SECONDS_SCANNING, handle_power_saving, &fsm, NULL);
 			// TODO: scan devices over bluetooth
