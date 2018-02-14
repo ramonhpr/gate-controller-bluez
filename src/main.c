@@ -1,5 +1,6 @@
 #include <config.h>
 #include <ell/ell.h>
+#include "option.h"
 #include "dbus.h"
 #include "bluez_client.h"
 
@@ -35,6 +36,8 @@ int main (int argc, char* argv[])
 {
 	struct l_signal *sig;
 	sigset_t mask;
+	if (process_options(argc,argv))
+		return EXIT_FAILURE;
 	if (!l_main_init())
 		return EXIT_FAILURE;
 

@@ -59,7 +59,8 @@ bin_PROGRAMS = src/gatectl
 
 src_gatectl_SOURCES = src/main.c \
 		      src/dbus.h src/dbus.c \
-		      src/bluez_client.h src/bluez_client.c
+		      src/bluez_client.h src/bluez_client.c \
+		      src/option.h src/option.c
 
 src_gatectl_LDADD = ell/libell-internal.la -ldl
 
