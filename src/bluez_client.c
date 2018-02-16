@@ -1,5 +1,8 @@
 #include <ell/ell.h>
+#include <stdbool.h>
 #include "bluez_client.h"
+#include "adapter.h"
+
 static void bluez_client_connected(struct l_dbus *dbus, void *user_data)
 {
         l_info("client connected");
@@ -22,15 +25,16 @@ static void proxy_added(struct l_dbus_proxy *proxy, void *user_data)
 
         l_info("proxy added: %s %s", path, interface);
 
-        if (!strcmp(interface, "org.bluez.Adapter1") ||
-                                !strcmp(interface, "org.bluez.Device1")) {
-                char *str;
+	if (!strcmp(interface, "org.bluez.Adapter1") ) {
+                adapter.proxy = proxy;
+		if (get_adapter_properties() < 0)
+			return;
 
-                if (!l_dbus_proxy_get_property(proxy, "Address", "s", &str))
-                        return;
+		l_info("   Address: %s", adapter.address);
+		l_info("   Name: %s", adapter.name);
+		l_info("   Powered: %d", adapter.powered);
+	}
 
-                l_info("   Address: %s", str);
-        }
 }
 
 static void proxy_removed(struct l_dbus_proxy *proxy, void *user_data)
@@ -42,19 +46,14 @@ static void proxy_removed(struct l_dbus_proxy *proxy, void *user_data)
 static void property_changed(struct l_dbus_proxy *proxy, const char *name,
                                 struct l_dbus_message *msg, void *user_data)
 {
+	const char *interface = l_dbus_proxy_get_interface(proxy);
         l_info("property changed: %s (%s %s)", name,
                                         l_dbus_proxy_get_path(proxy),
-                                        l_dbus_proxy_get_interface(proxy));
+                                        interface);
 
-        if (!strcmp(name, "Address")) {
-                char *str;
-
-                if (!l_dbus_message_get_arguments(msg, "s", &str)) {
-                        return;
-                }
-
-                l_info("   Address: %s", str);
-        }
+	if (!strcmp(interface, "org.bluez.Adapter1") )
+		if (update_adapter_properties(msg, name) < 0 )
+			return;
 }
 
 bool client_init() {
