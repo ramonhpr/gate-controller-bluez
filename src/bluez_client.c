@@ -16,6 +16,8 @@ static void bluez_client_disconnected(struct l_dbus *dbus, void *user_data)
 static void bluez_client_ready(struct l_dbus_client *client, void *user_data)
 {
         l_info("client ready");
+	if (power_adapter_on())
+		return;
 }
 
 static void proxy_added(struct l_dbus_proxy *proxy, void *user_data)

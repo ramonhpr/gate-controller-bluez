@@ -38,13 +38,20 @@ int update_adapter_properties(struct l_dbus_message *msg, const char* name_prope
 	return 0;
 }
 
-static void cb_powered_on(struct l_dbus_proxy *proxy, struct l_dbus_message *result, void *user_data) { l_dbus_message_set_arguments(result, "b", user_data); l_info("Powered on"); }
+static void cb_powered_on(struct l_dbus_proxy *proxy, struct l_dbus_message *result, void *user_data) {
+	const char *msg, *txt;
+	if (l_dbus_message_is_error(result)) {
+		if (l_dbus_message_get_error(result, &msg, &txt))
+			l_error("%s: %s",msg, txt);
+	} else {
+		l_info("Powered on");
+	}
+}
 
 bool power_adapter_on()
 {
-	bool _true = true;
 	if (adapter.proxy)
-		if (!l_dbus_proxy_set_property(adapter.proxy, cb_powered_on, &_true, NULL, "Powered", "b"))
+		if (!l_dbus_proxy_set_property(adapter.proxy, cb_powered_on, NULL, NULL, "Powered", "b", true))
 			return false;
 
 	return true;

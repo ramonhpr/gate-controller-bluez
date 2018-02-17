@@ -4,6 +4,7 @@
 #include "manager.h"
 #include "dbus.h"
 #include "bluez_client.h"
+#include "adapter.h"
 
 static bool print_once = true;
 
@@ -50,11 +51,15 @@ void manager_state() {
 				PRINT_ONCE("Setup");
 			dbus_init();
 			client_init();
+			if (power_adapter_on() && enable_debug)
+				l_debug("Property could not be setted");
 			update_state(&fsm, IDLE);
 			break;
 		case IDLE:
 			if (enable_debug)
 				PRINT_ONCE("Idle");
+			if (!adapter.powered)
+				power_adapter_on();
 			if (!timeout_saving_power)
 				timeout_saving_power = l_timeout_create(TIME_SECONDS_IDLE, handle_power_saving, &fsm, NULL);
 			break;
