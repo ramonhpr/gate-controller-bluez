@@ -31,6 +31,12 @@ PKG_CHECK_MODULES(ELL, ell,
 AC_SUBST(ELL_CFLAGS)
 AC_SUBST(ELL_LIBS)
 
+PKG_CHECK_MODULES(BLUEZ, bluez,
+  [AC_DEFINE([HAVE_BLUEZ],[1],[Use BLUEZ])],
+  [AC_MSG_ERROR("bluez missing")])
+AC_SUBST(BLUEZ_CFLAGS)
+AC_SUBST(BLUEZ_LIBS)
+
 AC_ARG_ENABLE(optimization, AC_HELP_STRING([--disable-optimization],
                         [disable code optimization through compiler]), [
         if (test "${enableval}" = "no"); then
