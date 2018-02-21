@@ -3,6 +3,19 @@
 #include "bluez_client.h"
 #include "adapter.h"
 
+struct l_timeout* timeout_powered = NULL;
+
+static void verify_adapter_powered(struct l_timeout* timeout, void* user_data)
+{
+	if (!adapter.powered)
+		power_adapter_on();
+	if (!adapter.discoverable)
+		make_visible();
+	if (timeout_powered)
+		l_timeout_remove(timeout_powered);
+	timeout_powered = NULL;
+}
+
 static void bluez_client_connected(struct l_dbus *dbus, void *user_data)
 {
         l_info("client connected");
@@ -16,8 +29,8 @@ static void bluez_client_disconnected(struct l_dbus *dbus, void *user_data)
 static void bluez_client_ready(struct l_dbus_client *client, void *user_data)
 {
         l_info("client ready");
-	if (power_adapter_on())
-		return;
+	timeout_powered = l_timeout_create_ms(100, verify_adapter_powered, NULL, NULL);
+	change_name(NAME_BEACON);
 }
 
 static void proxy_added(struct l_dbus_proxy *proxy, void *user_data)
@@ -34,7 +47,9 @@ static void proxy_added(struct l_dbus_proxy *proxy, void *user_data)
 
 		l_info("   Address: %s", adapter.address);
 		l_info("   Name: %s", adapter.name);
+		l_info("   Alias: %s", adapter.alias);
 		l_info("   Powered: %d", adapter.powered);
+		l_info("   Discoverable: %d", adapter.discoverable);
 	}
 
 }
@@ -52,6 +67,8 @@ static void property_changed(struct l_dbus_proxy *proxy, const char *name,
         l_info("property changed: %s (%s %s)", name,
                                         l_dbus_proxy_get_path(proxy),
                                         interface);
+	if (!timeout_powered)
+		timeout_powered = l_timeout_create_ms(100, verify_adapter_powered, NULL, NULL);
 
 	if (!strcmp(interface, "org.bluez.Adapter1") )
 		if (update_adapter_properties(msg, name) < 0 )
@@ -79,6 +96,8 @@ bool client_init() {
 }
 
 bool client_exit() {
+	change_name(adapter.name);
         l_dbus_client_destroy(client);
+	l_timeout_remove(timeout_powered);
 	return true;
 }
