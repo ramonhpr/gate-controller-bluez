@@ -44,12 +44,6 @@ static void proxy_added(struct l_dbus_proxy *proxy, void *user_data)
                 adapter.proxy = proxy;
 		if (get_adapter_properties() < 0)
 			return;
-
-		l_info("   Address: %s", adapter.address);
-		l_info("   Name: %s", adapter.name);
-		l_info("   Alias: %s", adapter.alias);
-		l_info("   Powered: %d", adapter.powered);
-		l_info("   Discoverable: %d", adapter.discoverable);
 	}
 
 }

@@ -1,15 +1,15 @@
 #ifndef __ADAPTER_H
 #define __ADAPTER_H
 
-struct adapter_t {
+typedef struct __attribute__ ((packed)){
 	const char *name;
 	const char *address;
 	char *alias;
 	bool powered;
 	bool discoverable;
 	struct l_dbus_proxy *proxy;
-} adapter;
-
+} adapter_t;
+adapter_t adapter;
 
 int get_adapter_properties();
 

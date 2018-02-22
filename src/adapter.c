@@ -2,57 +2,70 @@
 #include <stdbool.h>
 #include "adapter.h"
 
+typedef struct {
+	const char* name;
+	const char* signature;
+	union {
+		void *value;
+		void **vector;
+	} ref; // This is a pointer to the related property in adapter model
+} property_t ;
+
+static property_t vproperty[] = {
+	{ "Address", "s" , { .vector = (void**)&adapter.address } },
+	{ "Name", "s" , { .vector = (void**)&adapter.name } },
+	{ "Alias", "s" , { .vector = (void**)&adapter.alias } },
+	{ "Powered", "b", { .value = (void*)&adapter.powered } },
+	{ "Discoverable", "b", { .value = (void*)&adapter.discoverable } },
+	{ NULL, NULL, { NULL, NULL} }
+};
+
+static void print_property(int i)
+{
+	if (!strcmp(vproperty[i].signature, "s")) {
+		l_info("   %s: %s", vproperty[i].name, (char*)*vproperty[i].ref.vector);
+	} else if (!strcmp(vproperty[i].signature, "b")) {
+		if (*((bool*)vproperty[i].ref.value))
+			l_info("   %s: on", vproperty[i].name);
+		else
+			l_info("   %s: off", vproperty[i].name);
+	}
+}
+
 int get_adapter_properties()
 {
-	if (!l_dbus_proxy_get_property(adapter.proxy, "Address", "s", &adapter.address))
-		return -1;
-
-	if (!l_dbus_proxy_get_property(adapter.proxy, "Name", "s", &adapter.name))
-		return -1;
-
-	if (!l_dbus_proxy_get_property(adapter.proxy, "Alias", "s", &adapter.alias))
-		return -1;
-
-	if (!l_dbus_proxy_get_property(adapter.proxy, "Powered", "b", &adapter.powered))
-		return -1;
-
-	if (!l_dbus_proxy_get_property(adapter.proxy, "Discoverable", "b", &adapter.discoverable))
-		return -1;
+	uint8_t i;
+	for (i = 0 ; vproperty[i].name != NULL ; i++) {
+		if (!strcmp(vproperty[i].signature, "s")) {
+			if (!l_dbus_proxy_get_property(adapter.proxy, vproperty[i].name, vproperty[i].signature, &(*vproperty[i].ref.vector)))
+				return -1;
+		} else if (!strcmp(vproperty[i].signature, "b")) {
+			if (!l_dbus_proxy_get_property(adapter.proxy, vproperty[i].name, vproperty[i].signature, vproperty[i].ref.value))
+				return -1;
+		}
+	}
+	for (i = 0 ; vproperty[i].name != NULL ; i++)
+		print_property(i);
 	return 0;
 }
 
 int update_adapter_properties(struct l_dbus_message *msg, const char* name_property)
 {
-	if (!strcmp(name_property,"Address")) {
-		if (!l_dbus_message_get_arguments(msg, "s", &adapter.address))
-			return -1;
-		l_info("   Address: %s", adapter.address);
-	}
+	uint8_t i;
 
-	if (!strcmp(name_property,"Name")){
-		if (!l_dbus_message_get_arguments(msg, "s", &adapter.name))
-			return -1;
-		l_info("   Name: %s", adapter.name);
+	for (i = 0; vproperty[i].name != NULL ; i++) {
+		if (!strcmp(name_property, vproperty[i].name)) {
+			if (!strcmp(vproperty[i].signature, "s")) {
+				if (!l_dbus_message_get_arguments(msg, vproperty[i].signature, &(*vproperty[i].ref.vector)))
+					return -1;
+			} else if (!strcmp(vproperty[i].signature, "b")) {
+				if (!l_dbus_message_get_arguments(msg, vproperty[i].signature, vproperty[i].ref.value ))
+					return -1;
+			}
+			print_property(i);
+			return 0;
+		}
 	}
-
-	if (!strcmp(name_property,"Alias")) {
-		if (!l_dbus_message_get_arguments(msg, "s", &adapter.alias))
-			return -1;
-		l_info("   Alias: %s", adapter.alias);
-	}
-
-	if (!strcmp(name_property,"Powered")) {
-		if (!l_dbus_message_get_arguments(msg, "b", &adapter.powered))
-			return -1;
-		l_info("   Powered: %d", adapter.powered);
-	}
-
-	if (!strcmp(name_property,"Discoverable")) {
-		if (!l_dbus_message_get_arguments(msg, "b", &adapter.discoverable))
-			return -1;
-		l_info("   Discoverable: %d", adapter.discoverable);
-	}
-
 
 	return 0;
 }
@@ -63,8 +76,6 @@ static void cb_powered_on(struct l_dbus_proxy *proxy, struct l_dbus_message *res
 	if (l_dbus_message_is_error(result)) {
 		if (l_dbus_message_get_error(result, &msg, &txt))
 			l_error("%s: %s",msg, txt);
-	} else {
-		l_info("Powered on");
 	}
 }
 
