@@ -2,6 +2,8 @@
 #include "option.h"
 #include <ell/ell.h>
 
+struct l_timeout *exit_timeout;
+
 static void do_debug(const char *str, void *user_data)
 {
         l_info("%s", str);
@@ -60,7 +62,14 @@ bool dbus_init() {
 	return true;
 }
 
-bool dbus_exit() {
+static void cb_destroy(struct l_timeout* timeout, void* user_data)
+{
         l_dbus_destroy(p_dbus);
+	l_timeout_remove(exit_timeout);
+}
+
+
+bool dbus_exit() {
+        exit_timeout = l_timeout_create_ms(10, cb_destroy, NULL, NULL);
 	return true;
 }

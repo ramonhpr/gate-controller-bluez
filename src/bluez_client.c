@@ -97,7 +97,6 @@ bool client_init() {
 
 bool client_exit() {
 	change_name(adapter.name);
-        l_dbus_client_destroy(client);
 	l_timeout_remove(timeout_powered);
 	return true;
 }
