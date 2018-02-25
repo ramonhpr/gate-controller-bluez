@@ -10,6 +10,7 @@ static bool terminating;
 static void main_loop_quit(struct l_timeout *timeout, void *user_data)
 {
         l_main_quit();
+	l_timeout_remove(timeout);
 }
 
 static void terminate(void)
