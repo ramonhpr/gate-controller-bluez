@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "bluez_client.h"
 #include "adapter.h"
+#include "option.h"
 
 struct l_timeout* timeout_powered = NULL;
 
@@ -38,7 +39,8 @@ static void proxy_added(struct l_dbus_proxy *proxy, void *user_data)
         const char *interface = l_dbus_proxy_get_interface(proxy);
         const char *path = l_dbus_proxy_get_path(proxy);
 
-        l_info("proxy added: %s %s", path, interface);
+	if (verbose)
+	        l_info("proxy added: %s %s", path, interface);
 
 	if (!strcmp(interface, "org.bluez.Adapter1") ) {
                 adapter.proxy = proxy;

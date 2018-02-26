@@ -8,7 +8,7 @@ static const char opt_string[];
 
 // Flags
 bool enable_debug ;
-
+bool verbose;
 // Functions
 int process_options(int argc, char* const argv[]);
 #endif

@@ -24,21 +24,28 @@ static void disconnect_callback(void *user_data)
 
 static void signal_message(struct l_dbus_message *message, void *user_data)
 {
-        const char *path, *interface, *member, *destination, *sender;
+        const char *path, *interface, *member, *destination, *sender, *msg, *txt;
 
         path = l_dbus_message_get_path(message);
         destination = l_dbus_message_get_destination(message);
 
-        l_info("Path=%s Destination=%s", path, destination);
+	if (l_dbus_message_is_error(message))
+		if (l_dbus_message_get_error(message, &msg, &txt))
+			l_error("%s: %s", msg, txt);
+
+	if (verbose)
+	        l_info("Path=%s Destination=%s", path, destination);
 
         interface = l_dbus_message_get_interface(message);
         member = l_dbus_message_get_member(message);
 
-        l_info("Interface=%s Member=%s", interface, member);
+	if (verbose)
+	        l_info("Interface=%s Member=%s", interface, member);
 
         sender = l_dbus_message_get_sender(message);
 
-        l_info("Sender=%s", sender);
+	if (verbose)
+	        l_info("Sender=%s", sender);
 
         if (!strcmp(member, "NameOwnerChanged")) {
                 const char *name, *old_owner, *new_owner;
@@ -46,8 +53,8 @@ static void signal_message(struct l_dbus_message *message, void *user_data)
                 if (!l_dbus_message_get_arguments(message, "sss",
                                         &name, &old_owner, &new_owner))
                         return;
-
-                l_info("Name=%s Old=%s New=%s", name, old_owner, new_owner);
+		if (verbose)
+			l_info("Name=%s Old=%s New=%s", name, old_owner, new_owner);
         }
 }
 

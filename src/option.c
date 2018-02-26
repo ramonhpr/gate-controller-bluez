@@ -5,14 +5,16 @@
 // Constants
 static const struct option long_options[] = {
 	{ "enable-debug",	no_argument, NULL, 'd' },
+	{ "verbose", 		no_argument, NULL, 'v' },
 	{ "help",		no_argument, NULL, 'h' },
 	{ }
 };
 
-static const char opt_string[] = "dh";
+static const char opt_string[] = "dvh";
 
 // Flags
 bool enable_debug = false;
+bool verbose = false;
 
 static void usage() {
 	printf("gatectl - Gate control daemon\n"
@@ -20,6 +22,7 @@ static void usage() {
 	printf("\tgatectl[options]:\n");
 	printf("Options:\n"
 		"\t-d, --enable-debug	 	Enable debug messages\n"
+		"\t-v, --verbose		Enable verbose\n"
 		"\t-h, --help		 	Show this usage message\n");
 }
 
@@ -33,6 +36,9 @@ int process_options(int argc, char* const argv[]) {
 		switch(opt) {
 			case 'd':
 				enable_debug = true;
+				break;
+			case 'v':
+				verbose = true;
 				break;
 			case 'h':
 				usage();
