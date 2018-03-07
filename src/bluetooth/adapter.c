@@ -17,7 +17,7 @@ static property_t vproperty[] = {
 	{ "Alias", "s" , { .vector = (void**)&adapter.alias } },
 	{ "Powered", "b", { .value = (void*)&adapter.powered } },
 	{ "Discoverable", "b", { .value = (void*)&adapter.discoverable } },
-	{ NULL, NULL, { NULL, NULL} }
+	{ NULL, NULL, { NULL} }
 };
 
 static void print_property(int i)

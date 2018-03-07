@@ -3,8 +3,8 @@
 #include "option.h"
 #include "manager.h"
 #include "dbus.h"
-#include "bluez_client.h"
-#include "adapter.h"
+#include "bluetooth/bluez_client.h"
+#include "bluetooth/adapter.h"
 
 static bool print_once = true;
 

@@ -3,16 +3,16 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_MAKEFLAGS = --no-print-directory
 
+SUBDIRS = src/bluetooth
 bin_PROGRAMS = src/gatectl
 
 src_gatectl_SOURCES = src/main.c \
 		      src/dbus.h src/dbus.c \
-		      src/bluez_client.h src/bluez_client.c \
 		      src/option.h src/option.c \
-		      src/adapter.c src/manager.c
+		      src/manager.h src/manager.c
 
-src_gatectl_CFLAGS = @ELL_CFLAGS@
-src_gatectl_LDADD = @ELL_LIBS@
+src_gatectl_CFLAGS = @ELL_CFLAGS@ -I$(top_srcdir)/src -I$(top_srcdir)/src/bluetooth
+src_gatectl_LDADD = @ELL_LIBS@ libs/libgatebluetooth.a -ldl
 
 AM_CFLAGS = -fvisibility=hidden
 
