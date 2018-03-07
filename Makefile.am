@@ -55,15 +55,16 @@ ell_sources = ell/ell.h ell/private.h ell/missing.h \
 
 ell_libell_internal_la_SOURCES = $(ell_sources)
 
+SUBDIRS = src/bluetooth
+
 bin_PROGRAMS = src/gatectl
 
 src_gatectl_SOURCES = src/main.c \
 		      src/dbus.h src/dbus.c \
-		      src/bluez_client.h src/bluez_client.c \
 		      src/option.h src/option.c \
-		      src/adapter.c src/manager.c
+		      src/manager.h src/manager.c
 
-src_gatectl_LDADD = ell/libell-internal.la -ldl
+src_gatectl_LDADD = ell/libell-internal.la libs/libgatebluetooth.a -ldl
 
 AM_CFLAGS = -fvisibility=hidden
 
