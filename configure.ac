@@ -2,7 +2,7 @@ AC_PREREQ([2.69])
 AC_INIT(gatectl, 0.1)
 
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile src/bluetooth/Makefile])
 AM_INIT_AUTOMAKE([subdir-objects foreign color-tests silent-rules])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])

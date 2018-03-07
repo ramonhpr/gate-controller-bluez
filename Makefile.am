@@ -7,15 +7,17 @@ src_iwpand_LDADD = @ELL_LIBS@ $(ell_sources)
 
 src_iwpand_CFLAGS = @ELL_CFLAGS@
 
+SUBDIRS = src/bluetooth
+
 bin_PROGRAMS = src/gatectl
 
 src_gatectl_SOURCES = src/main.c \
 		      src/dbus.h src/dbus.c \
-		      src/bluez_client.h src/bluez_client.c \
 		      src/option.h src/option.c \
-		      src/adapter.c src/manager.c
+		      src/manager.h src/manager.c
 
-src_gatectl_LDADD = ell/libell-internal.la -ldl
+src_gatectl_LDADD = @ELL_LIBS@ libs/libgatebluetooth.a -ldl
+src_gatectl_CFLAGS = @ELL_CFLAGS@ -I$(top_srcdir)/src -I$(top_srcdir)/src/bluetooth
 
 AM_CFLAGS = -fvisibility=hidden
 
