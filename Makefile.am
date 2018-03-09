@@ -13,7 +13,7 @@ src_gatectl_SOURCES = src/main.c \
 		      src/manager.h src/manager.c
 
 src_gatectl_LDADD = @ELL_LIBS@ libs/libgatebluetooth.a -ldl
-src_gatectl_CFLAGS = @ELL_CFLAGS@
+src_gatectl_CFLAGS = @ELL_CFLAGS@ -I$(top_srcdir)/src -I$(top_srcdir)/src/bluetooth
 
 AM_CFLAGS = -fvisibility=hidden
 

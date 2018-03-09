@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "bluez_client.h"
 #include "adapter.h"
-#include "../option.h"
+#include "option.h"
 
 struct l_timeout* timeout_powered = NULL;
 
