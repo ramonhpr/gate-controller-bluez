@@ -93,6 +93,7 @@ bool client_init() {
 
 bool client_exit() {
 	change_name(adapter.name);
+	power_adapter_off();
 	l_timeout_remove(timeout_powered);
 	return true;
 }
