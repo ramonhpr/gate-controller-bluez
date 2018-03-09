@@ -16,6 +16,7 @@ int get_adapter_properties();
 int update_adapter_properties(struct l_dbus_message *msg, const char* name_property);
 
 bool power_adapter_on();
+bool power_adapter_off();
 bool change_name(const char *new_name);
 bool make_visible();
 #endif

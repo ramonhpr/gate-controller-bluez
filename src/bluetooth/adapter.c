@@ -112,6 +112,15 @@ bool power_adapter_on()
 	return true;
 }
 
+bool power_adapter_off()
+{
+	if (adapter.proxy)
+		if (!l_dbus_proxy_set_property(adapter.proxy, cb_powered_on, NULL, NULL, "Powered", "b", false))
+			return false;
+
+	return true;
+}
+
 bool make_visible()
 {
 	if (adapter.proxy)
