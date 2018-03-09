@@ -2,9 +2,9 @@ noinst_LTLIBRARIES = libgatebluetooth.la
 
 AM_CFLAGS = $(WARNING_CFLAGS) $(BUILD_CFLAGS)
 
-libgatebluetooth_la_SOURCES = adapter.c bluez_client.c $(ell_sources)
+libgatebluetooth_la_SOURCES = adapter.c bluez_client.c
 libgatebluetooth_la_DEPENDENCIES = adapter.h bluez_client.h
-libgatebluetooth_la_LIBADD = $(abs_srcdir)/ell/libell-internal.la
+libgatebluetooth_la_CFLAGS = @ELL_CFLAGS@
 
 clean-local:
 	$(RM) -rf $(noinst_LTLIBRARIES)
