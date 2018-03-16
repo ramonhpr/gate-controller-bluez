@@ -3,10 +3,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_MAKEFLAGS = --no-print-directory
 
-src_iwpand_LDADD = @ELL_LIBS@ $(ell_sources)
-
-src_iwpand_CFLAGS = @ELL_CFLAGS@
-
 SUBDIRS = src/bluetooth
 
 bin_PROGRAMS = src/gatectl
